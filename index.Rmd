@@ -1,0 +1,49 @@
+---
+title: "Affairs"
+output: html_document
+date: "2026-03-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(dplyr)
+library(AER)
+library(plm)
+library(lmtest)
+library(tidyr)
+library(sandwich)
+library(stargazer)
+```
+
+## What causes people to have affairs?
+
+I use the Affairs package from AER to investigate what causes people to be infidelitous. The data is cross-sectional data from a survey conducted by Psychology Today in 1969. 
+
+I perform a probit and logit regression of whether someone had an affair (affair>0), on various independent variables. 
+
+
+```{r datafind, include = FALSE}
+source(here::here("afffair.R"))
+```
+
+The regression equation I estimate is affairs ~ male + yearsmarried + children + degree + religiousness, where degree is a dummy variable equal to 1 when one's educational attainment is college degree or higher. Religiousness is ranked on a scale of 1-5, with one being anti-religious, and 5 being ardently religious. 
+
+I use probit and logit, then estimate the regression, performing t-tests with robust-to-heteroskedasticity standard errors. 
+
+## Regression Outputs
+```{r, echo=FALSE, out.width=c("48%", "48%"), fig.show="hold"}
+knitr::include_graphics(c("probit_table.png", "logit_table.png"))
+```
+
+For the both models, the coefficients yearsmarried, religiousness and children are statistically significant at the 10% level or below. I'll just focus on the probit one to save space. 
+
+## Explanation
+
+The coefficient on yearsmarried is **`r round(coef(probit)["yearsmarried"], 3)`**. On its own, this doesn't tell us much as it can't be used to make linear predictions like in OLS. To get an understanding on what it means, one must use differences. I predicted the probability of having an affair for two different people, who have identical values of variables except one has been married for 1 year, the other for 10. Then I computed the difference in probabilities of having an affair for these two people. 
+
+The difference between 10 years' marriage and 1 years' marriage is **`r round(yearsmarried_change,4)`, which means that - all else equal - someone with 10 years'** marriage is **`r round(100 * (yearsmarried_change),2)`** percentage points more likely to have an affair than someone with 1 years' of marriage. 
+
+**Children** has a large effect. With a coefficient of **`r round(coef(probit)["children"],3)`** again not being very informative, I do a difference in predictions experiment. With all variables being kept at their means, except children where one person has none, and the other has children, having children increases the probability of having an affair by **`r round(100 *children_change,2)`** percentage points. 
+
+Finally **religiosity** has a strong effect, with a coefficient of **`r round(coef(probit)["religiousness"],3)`**. Doing a difference experiment shows that going from being anti-religious to ardently religious decreases the probability of having an affair by **`r round(100* relig_change,2)`**
