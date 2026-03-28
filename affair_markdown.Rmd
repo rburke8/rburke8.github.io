@@ -36,3 +36,9 @@ I use probit and logit, then estimate the regression, performing t-tests with ro
 ```{r, out.width="80%", fig.align="center", echo = FALSE}
 knitr::include_graphics("probit_table.png")
 ```
+
+## Logit 
+
+```{r, out.width="80%", fig.align="center", echo = FALSE}
+knitr::include_graphics("logit_table.png")
+```
