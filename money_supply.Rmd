@@ -91,7 +91,6 @@ ggplot(df_growth, aes(x = Date, y = money_growth_yoy)) +
   theme(axis.title.x = element_text(color = "white")) +
   theme(axis.title.y = element_text(colour = "white")) +
   theme(axis.text = element_text(colour = "white"))
-
 ```
 
 For month-on-month growth rates, the highest growth occurred on `r df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(mom),2), "%")`**.
