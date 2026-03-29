@@ -17,6 +17,7 @@ library(htmltools)
 library(webshot2)
 library(ggplot2)
 library(tidyverse)
+library(kableExtra)
 ```
 
 ## Marriage
@@ -41,3 +42,13 @@ The logit equation used is logit <- glm(married ~ wage + age + ethnicity + educa
              family = binomial(link = "logit")).
              
 First, I predict difference in probability of being married where all characteristics between two people are the same - set to the mean - except one person has the mean number of years' education, and the other has the highest, at **`r max(df$education)` years**. The difference comes out as **`r round(edu_predic,4)`.** This implies that going from **`r round(mean(df$education),0)` years** of education to **`r max(df$education)`** decreases one's probability of being married by **`r 100 * round(edu_predic,4)`** percentage points. 
+
+Next I compute how probability of being married changes with different paris of wage changes. The table below shows the 8 different wage pairs and the corresponding increase/decrease in probability of being married. 
+
+```{r table, echo = FALSE}
+knitr::kable(results_df,
+             caption = "Predicted probability change in being married",
+             digits = 3)
+```
+
+Evidently, the higher the hourly wage, the higher the chance of being married. 

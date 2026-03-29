@@ -45,18 +45,31 @@ wage_list <- list(
   c(mean(df$wage), max(df$wage))
 )
 
-for (w in wage_list) {
+# Pre‑allocate a numeric vector
+effects <- numeric(length(wage_list))
+
+# Loop over each wage pair
+for (i in seq_along(wage_list)) {
+  w <- wage_list[[i]]
+  
   newdata <- data.frame(
-    wage = w,
-    age = rep(mean(df$age), 2),
-    ethnicity = rep("cauc", 2),
-    education = rep(mean(df$education), 2),
-    gender = c("male", "female")
+    wage       = w,
+    age        = rep(mean(df$age), 2),
+    ethnicity  = rep("cauc", 2),
+    education  = rep(mean(df$education), 2),
+    gender     = rep("male", 2)
   )
   
   preds <- predict(logit, newdata = newdata, type = "response")
-  print(preds[2] - preds[1])
+  effects[i] <- 100 * (preds[2] - preds[1])
 }
+
+# Turn into a data frame for plotting
+results_df <- data.frame(
+  wage_start = round(sapply(wage_list, `[`, 1),2),
+  wage_end   = round(sapply(wage_list, `[`, 2),2),
+  effect     = paste0(round(effects,2), "%"))
+
 
 
 
