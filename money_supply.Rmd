@@ -1,0 +1,80 @@
+---
+title: "Money Supply"
+output: github_document
+date: "2026-03-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(scales)
+library(AER)
+library(plm)
+library(lmtest)
+library(dplyr)
+library(tidyr)
+library(stargazer)
+library(webshot2)
+library(htmltools)
+library(webshot2)
+library(ggplot2)
+library(tidyverse)
+library(kableExtra)
+```
+
+```{r, include=FALSE}
+source(here::here("money_supply.R"))
+```
+
+## Money Supply
+
+Using data from <https://www.bankofengland.co.uk/statistics/Tables>, Table A2.2.1 - Components of M4, I plot the change in UK money supply. Since most of the money supply is created when commerical banks create deposits, I use total retail deposits for households and private non-financial corporations. Wholesale deposits and repos are excluded, as well as notes and coin. 
+
+The data runs from `r min(df_growth$Date)` to `r max(df_growth$Date)`. I plot total money supply in sterling millions, month-on-month % growth rate as well as 3-month annualised growth rate. 
+
+```{r plots, fig.height=2, fig.width=3, echo=FALSE, warning = FALSE}
+ggplot(df, aes(x = Date, y = M4)) + 
+  geom_line(color = "yellow", linewidth = 1.5) +
+  scale_y_continuous(labels = comma) +
+  labs(x = "Year", y = "Growth") +
+  ggtitle("Money Supply, \n sterling millions 1982 - 2026") +
+  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
+  theme(panel.background = element_rect("black")) +
+  theme(plot.background = element_rect("black")) +
+  theme(axis.text = element_text(colour = "white"))
+```
+
+The money supply as of `r format(max(df$Date))` is 
+£`r scales::comma(1e6 * (df %>% filter(Date == max(Date)) %>% slice(1) %>% pull(M4)))`, i.e. £`r scales::comma(round((1e6 * (df %>% filter(Date == max(Date)) %>% slice(1) %>% pull(M4))) / 1e12,3))` trillion.
+
+
+
+
+
+
+```{r more-plots, fig.height=2, fig.width=3, fig.show='hold', echo=FALSE, out.width="50%", echo=FALSE, warning=FALSE}
+ggplot(df_growth, aes(x = Date, y = mom)) + 
+  geom_line(color = "yellow", linewidth = 0.5) +
+  labs("Year", "Growth") +
+  scale_y_continuous(labels = comma) +
+  ggtitle("% M4 growth - month-on-month") +
+  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
+  theme(panel.background = element_rect("black")) +
+  theme(plot.background = element_rect("black"))+
+  theme(axis.text = element_text(colour = "white"))
+
+ggplot(df_growth, aes(x = Date, y = growth_3m_ann)) + 
+  geom_line(color = "yellow", linewidth = 0.5) +
+  labs("Year", "Growth") +
+  scale_y_continuous(labels = comma) +
+  ggtitle("% M4 growth - 3-month annualised") +
+  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
+  theme(panel.background = element_rect("black")) +
+  theme(plot.background = element_rect("black"))+
+  theme(axis.text = element_text(colour = "white"))
+```
+
+For month-on-month growth rates, the highest growth occurred on `r df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of `r paste0(round(df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(mom),2), "%")`.
+
+For 3-month annualised growth rates, the highest growth occurred on `r df_growth %>% filter(growth_3m_ann == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of `r paste0(round(df_growth %>% filter(growth_3m_ann  == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(growth_3m_ann),2), "%")`.
+
