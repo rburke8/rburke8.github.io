@@ -1,0 +1,43 @@
+---
+title: "Factors Influencing Marriage"
+output: github_document
+date: "2026-03-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(AER)
+library(plm)
+library(lmtest)
+library(dplyr)
+library(tidyr)
+library(stargazer)
+library(webshot2)
+library(htmltools)
+library(webshot2)
+library(ggplot2)
+library(tidyverse)
+```
+
+## Marriage
+
+I perform a logistic regression on the CPS1985 data - cross-sectional data which comes from the May 1985 current population survey by the US Census Bureau. 
+```{r source-script, include = FALSE}
+source(here::here("CPS1985.R"))
+```
+
+
+```{r plot, fig.height=2, fig.width=3, echo=FALSE}
+ggplot(df, aes(x = education)) +
+  geom_histogram(fill = "#69b3a2",binwidth = 1) +
+  labs(x = "years of education", y = "count") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+```
+
+Here we see the distribution of number of years of education, the mean value being `r round(mean(df$education),2)`.
+
+The logit equation used is logit <- glm(married ~ wage + age + ethnicity + education + gender, 
+             data = df,
+             family = binomial(link = "logit")).
+             
+First, I predict difference in probability of being married where all characteristics between two people are the same - set to the mean - except one person has the mean number of years' education, and the other has the highest, at **`r max(df$education)` years**. The difference comes out as **`r round(edu_predic,4)`.** This implies that going from **`r round(mean(df$education),0)` years** of education to **`r max(df$education)`** decreases one's probability of being married by **`r 100 * round(edu_predic,4)`** percentage points. 

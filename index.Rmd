@@ -12,3 +12,4 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Pages
 - [Affairs analysis](affairs.md)
+- [Marriage analysis](CPS1985.md)
