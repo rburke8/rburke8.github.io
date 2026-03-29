@@ -42,7 +42,6 @@ ggplot(df, aes(x = Date, y = M4)) +
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black")) +
   theme(axis.text = element_text(colour = "white")) +
-  labs(x = "Year", y = "Inflation") +
   theme(axis.title.x = element_text(colour = "white")) +
   theme(axis.title.y = element_text(colour = "white"))
 ```
