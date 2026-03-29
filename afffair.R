@@ -8,6 +8,8 @@ library(stargazer)
 library(webshot2)
 library(htmltools)
 library(webshot2)
+library(ggplot2)
+library(tidyverse)
 data("Affairs")
 ?Affairs
 df <- Affairs %>% 
@@ -73,4 +75,20 @@ predictions3 <- predict(probit,
                                              "religiousness" = c(1, 5),
                                              "yearsmarried" = c(mean(df$yearsmarried), mean(df$yearsmarried))),
                         type = "response")
-relig_change <- diff(predictions3)              
+relig_change <- diff(predictions3)
+
+#----
+hist(df$yearsmarried, breaks = 1)
+ggplot(df, aes(x = age)) +
+  geom_histogram(fill="#69b3a2",
+                 binwidth = 4,color="#e9ecef", alpha=0.9) +
+  labs(x = "Years of Marriage", y = "Count") +
+  ggtitle("Distribution of years of marriage,\nbin width = 4") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+
+ggplot(Affairs, aes(x = affairs)) +
+  geom_histogram(fill = "#69b3a2",
+                 binwidth = 1, color = "#e9ecef",alpha = 0.9) +
+  labs(x = "Affairs", y = "Count") +
+  ggtitle("Distribution of number of affairs,\nbin width = 1") +
+  theme(plot.title = element_text(size = 9, face = "bold"))

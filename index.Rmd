@@ -13,6 +13,7 @@ library(plm)
 library(lmtest)
 library(tidyr)
 library(sandwich)
+library(ggplot2)
 library(stargazer)
 ```
 
@@ -22,11 +23,34 @@ I use the Affairs package from AER to investigate what causes people to be infid
 
 I perform a probit and logit regression of whether someone had an affair (affair>0), on various independent variables. 
 
-
 ```{r datafind, include = FALSE}
 source(here::here("afffair.R"))
 ```
 
+## Data Inspection
+
+```{r summary}
+summary(Affairs)
+```
+
+```{r plot, fig.height=2, fig.width=3, echo=FALSE}
+ggplot(df, aes(x = age)) +
+  geom_histogram(fill="#69b3a2",
+                 binwidth = 4,color="#e9ecef", alpha=0.9) +
+  labs(x = "Years of Marriage", y = "Count") +
+  ggtitle("Distribution of years of marriage,\n bin width = 4") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+```
+
+
+```{r plot2, fig.height = 2, fig.width=3, echo=FALSE}
+ggplot(Affairs, aes(x = affairs)) +
+  geom_histogram(fill = "#69b3a2",
+            binwidth = 1, color = "#e9ecef",alpha = 0.9) +
+  labs(x = "Affairs", y = "Count") +
+  ggtitle("Distribution of number of affairs,\n bin width = 1") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+```
 The regression equation I estimate is affairs ~ male + yearsmarried + children + degree + religiousness, where degree is a dummy variable equal to 1 when one's educational attainment is college degree or higher. Religiousness is ranked on a scale of 1-5, with one being anti-religious, and 5 being ardently religious. 
 
 I use probit and logit, then estimate the regression, performing t-tests with robust-to-heteroskedasticity standard errors. 
