@@ -63,6 +63,19 @@ ggplot(df_growth, aes(x = Date, y = growth_3m_ann)) +
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black"))
 
+ggplot(df_growth, aes(x = Date, y = money_growth_yoy)) + 
+  geom_line(color = "yellow", linewidth = 0.5) +
+  labs("Year", "Growth", colour = "white") +
+  scale_y_continuous(labels = comma) +
+  labs(x = "Year", y = "Growth") +
+  ggtitle("% M4 growth - annualised") +
+  theme(plot.title = element_text(size = 12 , face = "bold", colour = "white"))+
+  theme(panel.background = element_rect("black")) +
+  theme(plot.background = element_rect("black")) +
+  theme(axis.title.x = element_text(color = "white")) +
+  theme(axis.title.y = element_text(colour = "white"))
+
+
 #----
 #Inflation
 inflation <- read.csv("data/series-290326.csv") %>% 

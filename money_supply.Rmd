@@ -41,7 +41,10 @@ ggplot(df, aes(x = Date, y = M4)) +
   theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black")) +
-  theme(axis.text = element_text(colour = "white"))
+  theme(axis.text = element_text(colour = "white")) +
+  labs(x = "Year", y = "Inflation") +
+  theme(axis.title.x = element_text(colour = "white")) +
+  theme(axis.title.y = element_text(colour = "white"))
 ```
 
 The money supply as of `r format(max(df$Date))` is 
@@ -55,28 +58,48 @@ The money supply as of `r format(max(df$Date))` is
 ```{r more-plots, fig.height=2, fig.width=3, fig.show='hold', echo=FALSE, out.width="50%", echo=FALSE, warning=FALSE}
 ggplot(df_growth, aes(x = Date, y = mom)) + 
   geom_line(color = "yellow", linewidth = 0.5) +
-  labs("Year", "Growth") +
+  labs(x = "Year", y = "Growth") +
   scale_y_continuous(labels = comma) +
   ggtitle("% M4 growth - month-on-month") +
   theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black"))+
-  theme(axis.text = element_text(colour = "white"))
+  theme(axis.text = element_text(colour = "white"))+
+  theme(axis.title.x = element_text(color = "white")) +
+  theme(axis.title.y = element_text(colour = "white"))
 
 ggplot(df_growth, aes(x = Date, y = growth_3m_ann)) + 
   geom_line(color = "yellow", linewidth = 0.5) +
-  labs("Year", "Growth") +
+  labs(x = "Year", y = "Growth") +
   scale_y_continuous(labels = comma) +
   ggtitle("% M4 growth - 3-month annualised") +
   theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black"))+
+  theme(axis.text = element_text(colour = "white"))+
+  theme(axis.title.x = element_text(color = "white")) +
+  theme(axis.title.y = element_text(colour = "white")) 
+
+ggplot(df_growth, aes(x = Date, y = money_growth_yoy)) + 
+  geom_line(color = "yellow", linewidth = 0.5) +
+  labs("Year", "Growth", colour = "white") +
+  scale_y_continuous(labels = comma) +
+  labs(x = "Year", y = "Growth") +
+  ggtitle("% M4 growth - annualised") +
+  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
+  theme(panel.background = element_rect("black")) +
+  theme(plot.background = element_rect("black")) +
+  theme(axis.title.x = element_text(color = "white")) +
+  theme(axis.title.y = element_text(colour = "white")) +
   theme(axis.text = element_text(colour = "white"))
+
 ```
 
-For month-on-month growth rates, the highest growth occurred on `r df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of `r paste0(round(df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(mom),2), "%")`.
+For month-on-month growth rates, the highest growth occurred on `r df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(mom),2), "%")`**.
 
-For 3-month annualised growth rates, the highest growth occurred on `r df_growth %>% filter(growth_3m_ann == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of `r paste0(round(df_growth %>% filter(growth_3m_ann  == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(growth_3m_ann),2), "%")`.
+For 3-month annualised growth rates, the highest growth occurred on `r df_growth %>% filter(growth_3m_ann == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(growth_3m_ann  == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(growth_3m_ann),2), "%")`**.
+
+For year on year growth rates, the highest growth occurred on `r df_growth %>% filter(money_growth_yoy  == max(money_growth_yoy , na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(money_growth_yoy   == max(money_growth_yoy , na.rm = TRUE)) %>% slice(1) %>% pull(money_growth_yoy ),2), "%")`**.
 
 ## Inflation
 
@@ -85,14 +108,16 @@ I plot annualised inflation data from <https://www.ons.gov.uk/economy/inflationa
 ```{r inflation-plot, fig.height=2, fig.width=3, echo=FALSE}
 ggplot(data = inflation, aes(x = Date, y = inflation)) +
   geom_line(color = "yellow", linewidth = 0.5) +
-  labs(x = "Date", y = "Inflation") +
+  labs(x = "Year", y = "Inflation") +
   ggtitle("Annual Inflation (%)") +
   theme(plot.title = element_text(face = "bold", size = 9))+
   theme(axis.title.x = element_text(color = "white"))+
   theme(axis.title.y = element_text(color = "white"))+
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black"))+
-  theme(plot.title = element_text(color = "white"))
+  theme(plot.title = element_text(color = "white")) +
+  theme(axis.text = element_text(colour = "white")) 
+  
   
 ```
 

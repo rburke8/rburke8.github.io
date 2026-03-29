@@ -20,13 +20,16 @@ annualised growth rate.
 The money supply as of 2026-01-01 is £2,358,688,000,000, i.e. £2
 trillion.
 
-<img src="money_supply_files/figure-gfm/more-plots-1.png" width="50%" /><img src="money_supply_files/figure-gfm/more-plots-2.png" width="50%" />
+<img src="money_supply_files/figure-gfm/more-plots-1.png" width="50%" /><img src="money_supply_files/figure-gfm/more-plots-2.png" width="50%" /><img src="money_supply_files/figure-gfm/more-plots-3.png" width="50%" />
 
 For month-on-month growth rates, the highest growth occurred on
-2008-09-01, with a growth rate of 2.19%.
+2008-09-01, with a growth rate of **2.19%**.
 
 For 3-month annualised growth rates, the highest growth occurred on
-2015-12-01, with a growth rate of 7.8%.
+2015-12-01, with a growth rate of **7.8%**.
+
+For year on year growth rates, the highest growth occurred on
+2022-09-01, with a growth rate of **1.32%**.
 
 ## Inflation
 
