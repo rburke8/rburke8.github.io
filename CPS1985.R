@@ -85,3 +85,9 @@ ggplot(df, aes(x = education)) +
   theme(plot.title = element_text(size = 9, face = "bold"))
 
 max(df$education)
+
+##ethnicity dataframe
+eth <- df %>% 
+  count(ethnicity, name = "count") %>% 
+  mutate(ethnicity = recode(ethnicity, cauc = "Caucasian", hispanic = "Hispanic"))
+

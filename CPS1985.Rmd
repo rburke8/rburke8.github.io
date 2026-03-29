@@ -27,15 +27,38 @@ I perform a logistic regression on the CPS1985 data - cross-sectional data which
 source(here::here("CPS1985.R"))
 ```
 
+Here's some plots of the ditribution of various statistics:
 
-```{r plot, fig.height=2, fig.width=3, echo=FALSE}
+```{r plot-edu-wage, fig.show='hold',out.width = "50%",fig.height=2, fig.width=3, echo=FALSE}
 ggplot(df, aes(x = education)) +
   geom_histogram(fill = "#69b3a2",binwidth = 1) +
   labs(x = "years of education", y = "count") +
+  ggtitle("Years of education \n distribution") +
   theme(plot.title = element_text(size = 9, face = "bold"))
+
+ggplot(df, aes(x = wage)) +
+  geom_histogram(binwidth = 1, fill = "#69b3a2") +
+  labs(x = "Wage (dollars/hour)", y = "count") +
+  ggtitle("Wage distribution") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+
 ```
 
-Here we see the distribution of number of years of education, the mean value being `r round(mean(df$education),2)`.
+
+```{r plot-age-ethnicity, fig.show='hold', out.width = "50%",fig.height=2, fig.width=3, echo=FALSE}
+ggplot(df, aes(x = age)) +
+  geom_histogram(binwidth = 1, fill = "#69b3a2") +
+  labs(x = "Age", y = "count") +
+  ggtitle("Age distribution") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+
+ggplot(eth, aes(x = ethnicity, y = count)) +
+  geom_bar(stat = "identity",fill = "#69b3a2") +
+  labs(x = "Ethnicity", y = "count") +
+  ggtitle("Ethnicity distribution") +
+  theme(plot.title = element_text(size = 9, face = "bold"))
+  
+```
 
 The logit equation used is logit <- glm(married ~ wage + age + ethnicity + education + gender, 
              data = df,
@@ -45,10 +68,10 @@ First, I predict difference in probability of being married where all characteri
 
 Next I compute how probability of being married changes with different paris of wage changes. The table below shows the 8 different wage pairs and the corresponding increase/decrease in probability of being married. 
 
-```{r table, echo = FALSE}
-knitr::kable(results_df,
-             caption = "Predicted probability change in being married",
-             digits = 3)
+
+**Predicted probability change in being married**
+```{r preds, fig.cap="Predictions", echo=FALSE}
+knitr::kable(results_df)
 ```
 
-Evidently, the higher the hourly wage, the higher the chance of being married. 
+The table above demonstrates that, evidently, the higher the hourly wage, the higher the chance of being married. 
