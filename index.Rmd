@@ -11,4 +11,4 @@ knitr::opts_chunk$set(echo = TRUE)
 # Greetings
 
 ## Pages
-- [Affairs analysis(affairs.md)]
+- [Affairs analysis](affairs.md)
