@@ -11,6 +11,7 @@ library(ggplot2)
 library(tidyverse)
 data(package = "AER")
 data("CPS1985")
+?CPS1985
 df <- CPS1985
 head(CPS1985)
 ?CPS1985
@@ -26,15 +27,43 @@ logit <- glm(married ~ wage + age + ethnicity + education + gender,
 summary(df$education)
 
 predictions <- predict(logit, 
-                       newdata = data.frame("wage" = c(mean(df$wage), mean(df$wage)),
+                       newdata = data.frame("wage" = c(1, 44.5),
                                             "age" = c(mean(df$age),mean(df$age)),
                                             "ethnicity" = c("cauc", "cauc"),
-                                            "education" = c(mean(df$education),18),
+                                            "education" = c(mean(df$education),mean(df$education)),
                                             "gender" = c("male", "female")),
                                             type = "response")
 
-edu_predic <- diff(predictions)
+wage_list <- list(
+  c(mean(df$wage), mean(df$wage)),
+  c(mean(df$wage), 10),
+  c(mean(df$wage), 15),
+  c(mean(df$wage), 20),
+  c(mean(df$wage), 25),
+  c(mean(df$wage), 30),
+  c(mean(df$wage), 40),
+  c(mean(df$wage), max(df$wage))
+)
 
+for (w in wage_list) {
+  newdata <- data.frame(
+    wage = w,
+    age = rep(mean(df$age), 2),
+    ethnicity = rep("cauc", 2),
+    education = rep(mean(df$education), 2),
+    gender = c("male", "female")
+  )
+  
+  preds <- predict(logit, newdata = newdata, type = "response")
+  print(preds[2] - preds[1])
+}
+
+
+
+
+edu_predic <- diff(predictions)
+diff(predictions)
+summary(df$wage)
 #----
 #plot
 ggplot(df, aes(x = education)) +

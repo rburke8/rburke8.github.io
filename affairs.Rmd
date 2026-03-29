@@ -70,4 +70,4 @@ The difference between 10 years' marriage and 1 years' marriage is **`r round(ye
 
 **Children** has a large effect. With a coefficient of **`r round(coef(probit)["children"],3)`** again not being very informative, I do a difference in predictions experiment. With all variables being kept at their means, except children where one person has none, and the other has children, having children increases the probability of having an affair by **`r round(100 *children_change,2)`** percentage points. 
 
-Finally **religiosity** has a strong effect, with a coefficient of **`r round(coef(probit)["religiousness"],3)`**. Doing a difference experiment shows that going from being anti-religious to ardently religious decreases the probability of having an affair by **`r round(100* relig_change,2)`**
+Finally **religiosity** has a strong effect, with a coefficient of **`r round(coef(probit)["religiousness"],3)`**. Doing a difference experiment shows that going from being anti-religious to ardently religious decreases the probability of having an affair by **`r round(100* relig_change,2)`** percentage points. 
