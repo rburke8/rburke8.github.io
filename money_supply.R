@@ -102,4 +102,3 @@ ggplot(data = inflation, aes(x = Date, y = inflation)) +
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black"))+
   theme(plot.title = element_text(color = "white"))
-
