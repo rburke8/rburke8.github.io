@@ -92,3 +92,4 @@ ggplot(Affairs, aes(x = affairs)) +
   labs(x = "Affairs", y = "Count") +
   ggtitle("Distribution of number of affairs,\nbin width = 1") +
   theme(plot.title = element_text(size = 9, face = "bold"))
+
