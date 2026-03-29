@@ -36,4 +36,4 @@ I plot annualised inflation data from
 ![](money_supply_files/figure-gfm/inflation-plot-1.png)<!-- -->
 
 Between 1989-01-01 and 2026-02-01, the highest recorded rate of
-inflation was 9.6% which occured in 2022-10-01
+inflation was **9.6%** which occurred in 2022-10-01
