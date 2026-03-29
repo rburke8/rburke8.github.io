@@ -8,7 +8,7 @@ date: "2026-03-29"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Greetings
+# Greetings and felicitations that are brimful of joy. 
 
 ## Pages
 - [Affairs analysis](affairs.md)
