@@ -10,3 +10,4 @@ Homepage
 - [Marriage analysis](CPS1985.md)
 - [Money supply](money_supply.md)
 - [FRED](FRED.md)
+- [WORDLADDER](WORDLADDER.md)
