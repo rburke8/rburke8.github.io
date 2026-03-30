@@ -1,0 +1,110 @@
+---
+title: "FRED"
+output: github_document
+date: "2026-03-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
+library(here)
+library(fredo)
+library(jsonlite)
+```
+
+```{r, include=FALSE}
+source(here::here("FRED.R"))
+```
+
+I recently downloaded a package from <https://fredblog.stlouisfed.org/2024/12/leveraging-r-for-powerful-data-analysis/> which lets you download FRED economic data straight into R Studio. I'm just testing it out here. 
+```{r plot, fig.height=4, fig.width=6, echo=FALSE}
+ggplot(df, aes(x = date, y = value)) + 
+  geom_line(color = "yellow", linewidth = 1) +
+  labs(
+    x = "Year",
+    y = "£ millions",
+    title = "UK Real GDP"
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  theme(
+    plot.title = element_text(size = 9, face = "bold", colour = "white"),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    axis.title.x = element_text(color = "white"),
+    axis.title.y = element_text(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+```
+
+
+The above chart is from <https://fred.stlouisfed.org/series/NGDPRSAXDCGBQ>. 
+
+
+```{r plot-2, fig.height=4,fig.width=6, echo= FALSE}
+ggplot(df3, aes(x = date, y = value)) + 
+  geom_line(color = "yellow", linewidth = 1) +
+  labs(
+    x = "Year",
+    y = "Index: 2013 = 100",
+    title = "Real GDP Per Person in the United Kingdom"
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  theme(
+    plot.title = element_text(size = 9, face = "bold", colour = "white"),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    axis.title.x = element_text(color = "white"),
+    axis.title.y = element_text(color = "white"), 
+    axis.text = element_text(color = "white")
+  )
+
+```
+
+The above chart is from <https://fred.stlouisfed.org/series/LPRGDPUKA>.
+
+```{r plot-3, fig.height=4, fig.width=6, echo = FALSE}
+ggplot(df4, aes(x = date, y = value)) + 
+  geom_line(color = "yellow", linewidth = 1) +
+  labs(
+    x = "Year",
+    y = "% of GDP",
+    title = "UK Government Debt"
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  theme(
+    plot.title = element_text(size = 9, face = "bold", colour = "white"),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    axis.title.x = element_text(color = "white"),
+    axis.title.y = element_text(color = "white"), 
+    axis.text = element_text(color = "white")
+  )
+```
+
+
+The above chart is from <https://fred.stlouisfed.org/series/DEBTTLGBA188A>.
+
+```{r, plot-4, fig.height = 4, fig.width = 6, echo = FALSE}
+ggplot(df5, aes(x = date, y = value)) + 
+  geom_line(color = "yellow", linewidth = 1) +
+  labs(
+    x = "Year",
+    y = "Count",
+    title = "UK Working Age Population - 1971 - 2025"
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  theme(
+    plot.title = element_text(size = 9, face = "bold", colour = "white"),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    axis.title.x = element_text(color = "white"),
+    axis.title.y = element_text(color = "white"), 
+    axis.text = element_text(color = "white")
+  )
+```
+
+
+The above chart is from <https://fred.stlouisfed.org/series/LFWA64TTGBQ647S>.

@@ -38,7 +38,7 @@ ggplot(df, aes(x = Date, y = M4)) +
   scale_y_continuous(labels = comma) +
   labs(x = "Year", y = "£ millions") +
   ggtitle("Money Supply, \n sterling millions 1982 - 2026") +
-  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
+  theme(plot.title = element_text(size = 11 , face = "bold", colour = "white"))+
   theme(panel.background = element_rect("black")) +
   theme(plot.background = element_rect("black")) +
   theme(axis.text = element_text(colour = "white")) +
