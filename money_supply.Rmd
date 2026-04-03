@@ -28,95 +28,109 @@ source(here::here("money_supply.R"))
 
 ## Money Supply
 
+I want to see whether year-on-year money supply growth affects year-on-year inflation. 
+
 Using data from <https://www.bankofengland.co.uk/statistics/Tables>, Table A2.2.1 - Components of M4, I plot the change in UK money supply. Since most of the money supply is created when commerical banks create deposits, I use total retail deposits for households and private non-financial corporations. Wholesale deposits and repos are excluded, as well as notes and coin. 
 
-The data runs from `r min(df_growth$Date)` to `r max(df_growth$Date)`. I plot total money supply in sterling millions, month-on-month % growth rate as well as 3-month annualised growth rate. 
+The data runs from `r min(df_growth$Date)` to `r max(df_growth$Date)`. I plot total money supply in sterling millions and year-on-year money supply growth.
 
-```{r plots, fig.height=2, fig.width=3, echo=FALSE, warning = FALSE}
+```{r plots, fig.height=2, fig.width=7, echo=FALSE, warning = FALSE}
 ggplot(df, aes(x = Date, y = M4)) + 
-  geom_line(color = "yellow", linewidth = 1.5) +
+  geom_line(color = "yellow", linewidth = 0.5) +
   scale_y_continuous(labels = comma) +
-  labs(x = "Year", y = "£ millions") +
-  ggtitle("Money Supply, \n sterling millions 1982 - 2026") +
-  theme(plot.title = element_text(size = 11 , face = "bold", colour = "white"))+
+  labs(x = "Year", y = "Growth") +
+  ggtitle("Money Supply\nsterling millions 1982 - 2026") +
+  theme(plot.title = element_text(size = 12 , face = "bold", colour = "white"))+
   theme(panel.background = element_rect("black")) +
-  theme(plot.background = element_rect("black")) +
-  theme(axis.text = element_text(colour = "white")) +
-  theme(axis.title.x = element_text(colour = "white")) +
-  theme(axis.title.y = element_text(colour = "white"))
+  theme(plot.background = element_rect("black"))
 ```
 
 The money supply as of `r format(max(df$Date))` is 
 £`r scales::comma(1e6 * (df %>% filter(Date == max(Date)) %>% slice(1) %>% pull(M4)))`, i.e. £`r scales::comma(round((1e6 * (df %>% filter(Date == max(Date)) %>% slice(1) %>% pull(M4))) / 1e12,3))` trillion.
 
 
-
-
-
-
-```{r more-plots, fig.height=2, fig.width=3, fig.show='hold', echo=FALSE, out.width="50%", echo=FALSE, warning=FALSE}
-ggplot(df_growth, aes(x = Date, y = mom)) + 
-  geom_line(color = "yellow", linewidth = 0.5) +
-  labs(x = "Year", y = "Growth") +
-  scale_y_continuous(labels = comma) +
-  ggtitle("% M4 growth - month-on-month") +
-  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
-  theme(panel.background = element_rect("black")) +
-  theme(plot.background = element_rect("black"))+
-  theme(axis.text = element_text(colour = "white"))+
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(colour = "white"))
-
-ggplot(df_growth, aes(x = Date, y = growth_3m_ann)) + 
-  geom_line(color = "yellow", linewidth = 0.5) +
-  labs(x = "Year", y = "Growth") +
-  scale_y_continuous(labels = comma) +
-  ggtitle("% M4 growth - 3-month annualised") +
-  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
-  theme(panel.background = element_rect("black")) +
-  theme(plot.background = element_rect("black"))+
-  theme(axis.text = element_text(colour = "white"))+
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(colour = "white")) 
-
+```{r more-plots, fig.height=2, fig.width=7, fig.show='hold', echo=FALSE, out.width="50%", echo=FALSE, warning=FALSE}
 ggplot(df_growth, aes(x = Date, y = money_growth_yoy)) + 
   geom_line(color = "yellow", linewidth = 0.5) +
-  labs("Year", "Growth", colour = "white") +
+  labs(x = "Year", x = "Growth") +
   scale_y_continuous(labels = comma) +
-  labs(x = "Year", y = "Growth") +
-  ggtitle("% M4 growth - annualised") +
-  theme(plot.title = element_text(size = 9 , face = "bold", colour = "white"))+
+  ggtitle("% M4 growth\nYear on year") +
+  theme(plot.title = element_text(size = 12 , face = "bold", colour = "white"))+
   theme(panel.background = element_rect("black")) +
-  theme(plot.background = element_rect("black")) +
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(colour = "white")) +
-  theme(axis.text = element_text(colour = "white"))
+  theme(plot.background = element_rect("black"))
+
 ```
 
-For month-on-month growth rates, the highest growth occurred on `r df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(mom == max(mom, na.rm = TRUE)) %>% slice(1) %>% pull(mom),2), "%")`**.
-
-For 3-month annualised growth rates, the highest growth occurred on `r df_growth %>% filter(growth_3m_ann == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(growth_3m_ann  == max(growth_3m_ann , na.rm = TRUE)) %>% slice(1) %>% pull(growth_3m_ann),2), "%")`**.
 
 For year on year growth rates, the highest growth occurred on `r df_growth %>% filter(money_growth_yoy  == max(money_growth_yoy , na.rm = TRUE)) %>% slice(1) %>% pull(Date)`, with a growth rate of **`r paste0(round(df_growth %>% filter(money_growth_yoy   == max(money_growth_yoy , na.rm = TRUE)) %>% slice(1) %>% pull(money_growth_yoy ),2), "%")`**.
 
 ## Inflation
 
-I plot annualised inflation data from <https://www.ons.gov.uk/economy/inflationandpriceindices/timeseries/l55o/mm23>.
+I plot year on year inflation data from <https://www.ons.gov.uk/economy/inflationandpriceindices/timeseries/l55o/mm23>. Compare it to money supply growth.
 
-```{r inflation-plot, fig.height=2, fig.width=3, echo=FALSE}
-ggplot(data = inflation, aes(x = Date, y = inflation)) +
-  geom_line(color = "yellow", linewidth = 0.5) +
-  labs(x = "Year", y = "Inflation") +
-  ggtitle("Annual Inflation (%)") +
-  theme(plot.title = element_text(face = "bold", size = 9))+
-  theme(axis.title.x = element_text(color = "white"))+
-  theme(axis.title.y = element_text(color = "white"))+
-  theme(panel.background = element_rect("black")) +
-  theme(plot.background = element_rect("black"))+
-  theme(plot.title = element_text(color = "white")) +
-  theme(axis.text = element_text(colour = "white")) 
-  
-  
+```{r inflation-plot, fig.height=2, fig.width=7, echo=FALSE}
+ggplot(data = inf, aes(x = Date)) +
+  geom_line(aes(y = inflation, color = "inflation"), linewidth = 0.8) +
+  geom_line(aes(y = money_growth_yoy, color = "money_growth_yoy"), linewidth = 0.8) +
+  scale_color_manual(
+    name = "Legend",
+    values = c("inflation" = "red", "money_growth_yoy" = "blue"),
+    labels = c("Inflation", "Money growth")
+  ) +
+  labs(x = "Date", y = "Year") +
+  ggtitle("Money Supply\nand Inflation 1989 - 2026") +
+  theme(axis.title.x = element_text(color = "white")) +
+  theme(axis.title.y = element_text(color = "white")) +
+  theme(plot.title = element_text(color = "white", face = "bold", size = 12)) +
+  theme(plot.background = element_rect("black")) +
+  theme(panel.background = element_rect("black"))
 ```
 
-Between `r min(inflation$Date)` and `r max(inflation$Date)`, the highest recorded rate of inflation was **`r paste0(inflation %>% filter(inflation == max(inflation)) %>% slice(1) %>%  pull(inflation),"%")`** which occurred in `r inflation %>% filter(inflation == max(inflation)) %>% slice(1) %>% pull(Date)`
+Between `r min(inf$Date)` and `r max(inf$Date)`, the highest recorded rate of inflation was **`r paste0(inf %>% filter(inflation == max(inflation)) %>% slice(1) %>%  pull(inflation),"%")`** which occurred in `r inf %>% filter(inflation == max(inflation)) %>% slice(1) %>% pull(Date)`
+
+## VAR Model
+
+I run a VAR model on the data. I first did a simple dynlm but wasn't happy with the results. The benefit of VAR is that all variables are endogenous, so money growth is allowed to affect inflation and vice-versa. This is probably more realistic since inflation can cause money growth movements via central bank behaviour, and money supply growth can affect inflation behaviour too. 
+
+```{r, include=FALSE}
+#VAR
+var_data <- cbind(inflationn = inf$inflation, 
+                  m4 = inf$money_growth_yoy)
+```
+
+```{r, include = FALSE}
+var_data <- ts(var_data, start = start(inf$inflation), frequency = 12)
+```
+
+```{r, include = TRUE, echo=TRUE}
+var_data <- ts(var_data, start = start(inf$inflation), frequency = 12)
+lagselect <- VARselect(var_data, lag.max = 12, type = "const")
+lagselect
+```
+
+BIC (also known as Schwarz criterion) says to use `r lagselect$selection["SC(n)"]` lag(s). 
+
+```{r, include = TRUE, echo = TRUE}
+var_model <- VAR(var_data, p = lagselect$selection["SC(n)"], type = "const")
+summary(var_model)
+```
+
+With a coefficient of **0.015**, significant at the 5% level, we see that lagged M4 growth positively affects inflation. For example, the mean M4 growth value of **`r round(mean(df_growth$money_growth_yoy, na.rm = TRUE,2))`%** would increase inflation by **`r round(0.015113 * mean(df_growth$money_growth_yoy, na.rm = TRUE),3)`** percentage points. The maximum M4 growth of **`r round(max(df_growth$money_growth_yoy, na.rm = TRUE,2))`%** would raise inflation by **`r round(0.015113 * max(df_growth$money_growth_yoy, na.rm = TRUE), 3)`** percentage points.
+
+With a coefficient of **0.99** we also see that inflation is extremely dependent on lagged inflation, and therefore very persistent. 
+
+Similarly, lagged inflation affects M4 growth with a coefficient of -0.05. So mean inflation growth of **`r round(mean(inf$inflation, na.rm = TRUE,2))`%** would decrease M4 growth by **`r round(mean(inf$inflation, na.rm = TRUE) * -0.04963, 2)`** percentage points. This captures monetary tightening by the Bank of England following an inflation spike. 
+
+## Impulse response
+
+Finally I plot an impulse-response function. This shows how inflation responds to a 1 S.D. shock to M4 growth, over a 25 month period. 
+
+```{r, include = TRUE, echo=TRUE}
+irf_model <- irf(var_model, impulse = "m4", response = "inflationn",
+                 n.ahead = 24, boot = TRUE)
+plot(irf_model)
+```
+
+
+
+
