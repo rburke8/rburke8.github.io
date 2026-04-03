@@ -154,7 +154,7 @@ Bank of England following an inflation spike.
 ## Impulse response
 
 Finally I plot an impulse-response function. This shows how inflation
-responds to a 1 S.D. shock to M4 growth, over a 25 month period.
+responds to a 1 S.D. shock to M4 growth, over a 24 month period.
 
 ``` r
 irf_model <- irf(var_model, impulse = "m4", response = "inflationn",

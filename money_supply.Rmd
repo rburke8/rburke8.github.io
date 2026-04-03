@@ -127,7 +127,7 @@ Similarly, lagged inflation affects M4 growth with a coefficient of -0.05. So me
 
 ## Impulse response
 
-Finally I plot an impulse-response function. This shows how inflation responds to a 1 S.D. shock to M4 growth, over a 25 month period. 
+Finally I plot an impulse-response function. This shows how inflation responds to a 1 S.D. shock to M4 growth, over a 24 month period. 
 
 ```{r, include = TRUE, echo=TRUE}
 irf_model <- irf(var_model, impulse = "m4", response = "inflationn",
