@@ -26,6 +26,10 @@ library(kableExtra)
 source(here::here("money_supply.R"))
 ```
 
+![](friedman.jpg)
+*Inflation is always and everywhere a monetary phenomonen.*
+
+
 ## Money Supply
 
 I want to see whether year-on-year money supply growth affects year-on-year inflation. 
