@@ -4,6 +4,7 @@ library(AER)
 library(patchwork)
 library(tidyverse)
 library(dplyr)
+library(gridExtra)
 library(purrr)
 library(readr)
 library("MatchIt")
@@ -306,6 +307,11 @@ gdp_out %>% plot_differences()
 plot_data <- panel %>% 
   filter(year>=1991,
          Country.Name == "Romania")
+maxgdp <- max(plot_data$gdp_pc)
+
+
+
+
 p1 <- ggplot(data = plot_data, aes(x = year, y = gdp_pc)) +
   geom_line(linewidth = 0.5, color = "yellow") +
   labs(x = "Year", y = "GDP per capita") +
@@ -314,7 +320,9 @@ p1 <- ggplot(data = plot_data, aes(x = year, y = gdp_pc)) +
   ggtitle("Romania GDP_pc") +
   theme(axis.title.x = element_text(color = "white")) +
   theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9))
+  theme(plot.title = element_text(color = "white", face = "bold", size = 9)) +
+  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
+  geom_text(aes(x = 2007,y = 12000, label = "Accession to EU"),color = "green", size = 2)
 
 p2 <- ggplot(data = plot_data, aes(x = year, y = cap_form)) +
   geom_line(linewidth = 0.5, color = "yellow") +
@@ -324,7 +332,9 @@ p2 <- ggplot(data = plot_data, aes(x = year, y = cap_form)) +
   ggtitle("Romania Capital Formation") +
   theme(axis.title.x = element_text(color = "white")) +
   theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9))
+  theme(plot.title = element_text(color = "white", face = "bold", size = 9))+
+  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
+  geom_text(aes(x = 2007,y = 32.5, label = "Accession to EU"),color = "green", size = 2)
 
 p3 <- ggplot(data = plot_data, aes(x = year, y = lab_produc)) +
   geom_line(linewidth = 0.5, color = "yellow") +
@@ -334,7 +344,9 @@ p3 <- ggplot(data = plot_data, aes(x = year, y = lab_produc)) +
   ggtitle("Romania Labour Productivity") +
   theme(axis.title.x = element_text(color = "white")) +
   theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9))
+  theme(plot.title = element_text(color = "white", face = "bold", size = 9))+
+  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
+  geom_text(aes(x = 2007,y = 100000, label = "Accession to EU"),color = "green", size = 2)
 
 p4 <- ggplot(data = plot_data, aes(x = year, y = gov_consump)) +
   geom_line(linewidth = 0.5, color = "yellow") +
@@ -344,12 +356,85 @@ p4 <- ggplot(data = plot_data, aes(x = year, y = gov_consump)) +
   ggtitle("Romania Government Consumption") +
   theme(axis.title.x = element_text(color = "white")) +
   theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9))
+  theme(plot.title = element_text(color = "white", face = "bold", size = 9)) +
+  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
+  geom_text(aes(x = 2007,y = 19, label = "Accession to EU"),color = "green", size = 2)
+
+
+grid.arrange(p1,p2,p3,p4, nrow = 2)
 
 
 p <- (p1 | p2) /
   (p3 | p4)  
-
+p
 ggsave(filename = "rom_synthetic.png", plot = p)
 
 
+
+
+#----
+#Excluding 2008-2009
+panel2 <- panel %>% 
+  filter(year != c(2008,2009))
+
+gdp_out2 <- panel2 %>%
+  
+  synthetic_control(
+    outcome = gdp_pc,
+    unit = Country.Name,
+    time = year,
+    i_unit = "Romania",
+    i_time = 2006,
+    generate_placebos = TRUE
+  ) %>%
+  
+  # ---- Average macro predictors ----
+generate_predictor(
+  time_window = 1991:2006,
+  avg_gdp          = mean(gdp_pc, na.rm = TRUE),
+  avg_gov_consump  = mean(gov_consump, na.rm = TRUE),
+  avg_cap_form     = mean(cap_form, na.rm = TRUE),
+  avg_lab_produc   = mean(lab_produc, na.rm = TRUE),
+  avg_agri     = mean(agri_vala, na.rm = TRUE),
+  avg_xports     = mean(exportss, na.rm = TRUE),
+  avg_imports     = mean(importss, na.rm = TRUE),
+  avg_industry    = mean(industry_vala, na.rm = TRUE),
+  avg_pop_growth    = mean(popu_growth, na.rm = TRUE)
+) %>%
+  
+  # ---- Lagged GDP predictors ----
+generate_predictor(
+  time_window = 2002:2006,
+  lag5_gdp = mean(gdp_pc, na.rm = TRUE)
+) %>%
+  
+  generate_predictor(
+    time_window = 2006,
+    lag1_gdp = gdp_pc
+  ) %>%
+  
+  # ---- Fit weights ----
+generate_weights(
+  optimization_window = 1991:2006,
+  margin_ipop = .02,
+  sigf_ipop = 7,
+  bound_ipop = 6
+) %>%
+  
+  # ---- Build synthetic control ----
+generate_control()
+
+
+
+
+
+# Weighting of units and variables
+gdp_out2 %>% plot_weights()
+
+# Comparability of synthetic control to treated unit
+gdp_out2 %>% grab_balance_table()
+
+#graph comparing paths
+gdp_out2 %>% plot_trends()
+# Graph of difference between the two
+gdp_out2 %>% plot_differences()

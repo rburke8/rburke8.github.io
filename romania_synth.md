@@ -1,170 +1,35 @@
-Romania
+Romania - Synthetic Controls
 ================
 2026-04-05
 
-``` r
-source(here::here("Barbara","romania_synthetic.R"))
-```
+<img src="brancastle.jpg" alt="Bran Castle" style="width:600px;height:400px;">
 
-    ## Warning: package 'AER' was built under R version 4.4.1
+# Introduction
 
-    ## Loading required package: car
+I recently learned how to do synthetic control estimation of causal
+effects in R. This is me just testing the code and getting used to how
+it works. The effect to be tested is the effect of Romania joining the
+EU in 2007 on real GDP per capita.
 
-    ## Loading required package: carData
+## Synthetic Romania after joining EU
 
-    ## Loading required package: lmtest
+I use 11 predictor variables in the function to explain GDP per capita.
+See the synthetic and treated comparison table below for a list. On
+account of NAs, I had to reduce the data to 1991 - 2021.
 
-    ## Loading required package: zoo
+## A few summary plots
 
-    ## 
-    ## Attaching package: 'zoo'
+![](romania_synth_files/figure-gfm/plot-1.png)<!-- -->
 
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     as.Date, as.Date.numeric
+## Control and variable weights
 
-    ## Loading required package: sandwich
+![](romania_synth_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-    ## Loading required package: survival
+It looks like Colombia was the most suitable in constructing a synthetic
+Romania pre-2007. Latvia, Belarus and South (I presume) Korea also
+contribute a bit.
 
-    ## Warning: package 'patchwork' was built under R version 4.4.3
-
-    ## Warning: package 'ggplot2' was built under R version 4.4.3
-
-    ## Warning: package 'tibble' was built under R version 4.4.3
-
-    ## Warning: package 'purrr' was built under R version 4.4.3
-
-    ## Warning: package 'dplyr' was built under R version 4.4.3
-
-    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ## ✔ dplyr     1.2.0     ✔ readr     2.1.5
-    ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ## ✔ ggplot2   4.0.2     ✔ tibble    3.3.1
-    ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.2.1
-
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-    ## ✖ dplyr::recode() masks car::recode()
-    ## ✖ purrr::some()   masks car::some()
-    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-    ## Warning: package 'MatchIt' was built under R version 4.4.3
-
-    ## Warning: package 'cobalt' was built under R version 4.4.3
-
-    ##  cobalt (Version 4.6.2, Build Date: 2026-01-29)
-    ## 
-    ## Attaching package: 'cobalt'
-    ## 
-    ## The following object is masked from 'package:MatchIt':
-    ## 
-    ##     lalonde
-
-    ## Warning: package 'matrixStats' was built under R version 4.4.3
-
-    ## 
-    ## Attaching package: 'matrixStats'
-    ## 
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     count
-
-    ## Warning: package 'ivreg' was built under R version 4.4.3
-
-    ## Registered S3 methods overwritten by 'ivreg':
-    ##   method              from
-    ##   anova.ivreg         AER 
-    ##   hatvalues.ivreg     AER 
-    ##   model.matrix.ivreg  AER 
-    ##   predict.ivreg       AER 
-    ##   print.ivreg         AER 
-    ##   print.summary.ivreg AER 
-    ##   summary.ivreg       AER 
-    ##   terms.ivreg         AER 
-    ##   update.ivreg        AER 
-    ##   vcov.ivreg          AER 
-    ## 
-    ## Attaching package: 'ivreg'
-    ## 
-    ## The following objects are masked from 'package:AER':
-    ## 
-    ##     ivreg, ivreg.fit
-
-    ## Warning: package 'rdrobust' was built under R version 4.4.3
-
-    ## Warning: package 'estimatr' was built under R version 4.4.3
-
-    ## Warning: package 'Synth' was built under R version 4.4.3
-
-    ## ##
-    ## ## Synth Package: Implements Synthetic Control Methods.
-    ## 
-    ## ## See https://web.stanford.edu/~jhain/synthpage.html for additional information.
-
-    ## Warning: package 'tidysynth' was built under R version 4.4.3
-
-    ## Warning: package 'jtools' was built under R version 4.4.3
-
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
-    ## ℹ The deprecated feature was likely used in the tidysynth package.
-    ##   Please report the issue to the authors.
-    ## This warning is displayed once per session.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
-    ## Saving 7 x 5 in image
-
-    ## Warning: Removed 1 row containing missing values or values outside the scale range
-    ## (`geom_line()`).
-
-    ## Warning: Removed 1 row containing missing values or values outside the scale range
-    ## (`geom_line()`).
-    ## Removed 1 row containing missing values or values outside the scale range
-    ## (`geom_line()`).
-    ## Removed 1 row containing missing values or values outside the scale range
-    ## (`geom_line()`).
-
-``` r
-library(AER)
-library(patchwork)
-library(tidyverse)
-library(dplyr)
-library(purrr)
-library(readr)
-library("MatchIt")
-library("cobalt")
-library("matrixStats")
-library(ivreg)
-library("rdrobust")
-library("estimatr")
-library("Synth") 
-library("tidysynth")  
-library("jtools")
-library(tidyr)
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(readr)
-library(tidysynth)
-```
-
-## Synthetic romania after joining EU
-
-``` r
-# Weighting of units and variables
-gdp_out %>% plot_weights()
-```
-
-![](romania_synth_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
-
-``` r
-# Comparability of synthetic control to treated unit
-gdp_out %>% grab_balance_table()
-```
+## Synthetic and treated comparison
 
     ## # A tibble: 11 × 4
     ##    variable          Romania synthetic_Romania donor_sample
@@ -181,32 +46,17 @@ gdp_out %>% grab_balance_table()
     ## 10 lag5_gdp         5974.             5936.       31589.   
     ## 11 lag1_gdp         6877.             6859.       33350.
 
-``` r
-#graph comparing paths
-gdp_out %>% plot_trends()
-```
+The algorithm’s done a good job - mostly - in creating a synthetic
+Romania. Average GDP, exports and imports are especially similar. The
+only major flaw is that real Romania has negative population growth,
+which the synthetic doesn’t.
 
-    ## Warning: Removed 62 rows containing missing values or values outside the scale range
-    ## (`geom_line()`).
+![](romania_synth_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-    ## Warning: Removed 62 rows containing missing values or values outside the scale range
-    ## (`geom_point()`).
+There is a clear jump in real GDP per capita for Romania after accession
+to the EU compared to the synthetic.
 
-![](romania_synth_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+![](romania_synth_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-``` r
-# Graph of difference between the two
-gdp_out %>% plot_differences()
-```
-
-    ## Ignoring unknown labels:
-    ## • colour : ""
-    ## • linetype : ""
-
-    ## Warning: Removed 31 rows containing missing values or values outside the scale range
-    ## (`geom_line()`).
-
-    ## Warning: Removed 31 rows containing missing values or values outside the scale range
-    ## (`geom_point()`).
-
-![](romania_synth_files/figure-gfm/unnamed-chunk-3-3.png)<!-- -->
+This can also be seen by plotting the differences. Before the accession,
+the difference moved around a mean of 0. After, it only grows.

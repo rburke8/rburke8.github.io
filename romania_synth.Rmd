@@ -1,5 +1,5 @@
 ---
-title: "Romania"
+title: "Romania - Synthetic Controls"
 output: github_document
 date: "2026-04-05"
 ---
@@ -8,16 +8,17 @@ date: "2026-04-05"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, include = FALSE}
 source(here::here("Barbara","romania_synthetic.R"))
 ```
 
-```{r}
+```{r, libraries, echo=FALSE,include=FALSE,warning=FALSE}
 library(AER)
 library(patchwork)
 library(tidyverse)
 library(dplyr)
 library(purrr)
+library(gridExtra)
 library(readr)
 library("MatchIt")
 library("cobalt")
@@ -36,18 +37,52 @@ library(readr)
 library(tidysynth)
 ```
 
+<img src="brancastle.jpg" alt="Bran Castle" style="width:600px;height:400px;">
 
-## Synthetic romania after joining EU
+# Introduction
 
-```{r}
+I recently learned how to do synthetic control estimation of causal effects in R. This is me just testing the code and getting used to how it works. The effect to be tested is the effect of Romania joining the EU in 2007 on real GDP per capita.  
+
+
+## Synthetic Romania after joining EU
+
+I use 11 predictor variables in the function to explain GDP per capita. See the synthetic and treated comparison table below for a list. On account of NAs, I had to reduce the data to 1991 - 2021. 
+
+## A few summary plots
+
+```{r, plot, fig.height = 4, fig.width = 6, echo = FALSE, warning = FALSE}
+grid.arrange(p1,p2,p3,p4, nrow = 2)
+```
+
+## Control and variable weights
+
+```{r, echo = FALSE, warning = FALSE}
 # Weighting of units and variables
 gdp_out %>% plot_weights()
+```
 
+It looks like Colombia was the most suitable in constructing a synthetic Romania pre-2007. Latvia, Belarus and South (I presume) Korea also contribute a bit. 
+
+## Synthetic and treated comparison
+
+```{r, echo=FALSE,warning=FALSE, message=FALSE}
 # Comparability of synthetic control to treated unit
 gdp_out %>% grab_balance_table()
+```
 
+The algorithm's done a good job - mostly - in creating a synthetic Romania. Average GDP, exports and imports are especially similar. The only major flaw is that real Romania has negative population growth, which the synthetic doesn't. 
+
+```{r, echo=FALSE, warning = FALSE, message=FALSE}
 #graph comparing paths
 gdp_out %>% plot_trends()
+```
+
+There is a clear jump in real GDP per capita for Romania after accession to the EU compared to the synthetic. 
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
 # Graph of difference between the two
 gdp_out %>% plot_differences()
 ```
+
+This can also be seen by plotting the differences. Before the accession, the difference moved around a mean of 0. After, it only grows.
+

@@ -2,10 +2,7 @@ Money Supply
 ================
 2026-03-29
 
-![](friedman.jpg) *Inflation is always and everywhere a monetary
-phenomonen.*
-
-## Money Supply
+# Money Supply
 
 I want to see whether year-on-year money supply growth affects
 year-on-year inflation.
