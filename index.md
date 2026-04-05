@@ -11,3 +11,4 @@ Homepage
 - [Money supply](money_supply.md)
 - [FRED](FRED.md)
 - [WORDLADDER](WORDLADDER.md)
+- [Synthetic controls!](romania_synth.md)

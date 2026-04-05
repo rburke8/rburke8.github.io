@@ -1,0 +1,53 @@
+---
+title: "Romania"
+output: github_document
+date: "2026-04-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source(here::here("Barbara","romania_synthetic.R"))
+```
+
+```{r}
+library(AER)
+library(patchwork)
+library(tidyverse)
+library(dplyr)
+library(purrr)
+library(readr)
+library("MatchIt")
+library("cobalt")
+library("matrixStats")
+library(ivreg)
+library("rdrobust")
+library("estimatr")
+library("Synth") 
+library("tidysynth")  
+library("jtools")
+library(tidyr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(readr)
+library(tidysynth)
+```
+
+
+## Synthetic romania after joining EU
+
+```{r}
+# Weighting of units and variables
+gdp_out %>% plot_weights()
+
+# Comparability of synthetic control to treated unit
+gdp_out %>% grab_balance_table()
+
+#graph comparing paths
+gdp_out %>% plot_trends()
+# Graph of difference between the two
+gdp_out %>% plot_differences()
+```
