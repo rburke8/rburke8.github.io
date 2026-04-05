@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE}
-source(here::here("romania_synthetic.R"))
+source(here::here("worldbankdata","romania_synthetic.R"))
 ```
 
 ```{r, libraries, echo=FALSE,include=FALSE,warning=FALSE}
@@ -61,7 +61,7 @@ grid.arrange(p1,p2,p3,p4, nrow = 2)
 gdp_out %>% plot_weights()
 ```
 
-It looks like Colombia was the most suitable in constructing a synthetic Romania pre-2007. Latvia, Belarus and South (I presume) Korea also contribute a bit. 
+It looks like Ukraine was the most suitable in constructing a synthetic Romania pre-2007. Turkey, Indonesia and South Korea also contribute a lot. The variable given the most weight is average gdp per capita.  
 
 ## Synthetic and treated comparison
 
@@ -70,7 +70,7 @@ It looks like Colombia was the most suitable in constructing a synthetic Romania
 gdp_out %>% grab_balance_table()
 ```
 
-The algorithm's done a good job - mostly - in creating a synthetic Romania. Average GDP, exports and imports are especially similar. The only major flaw is that real Romania has negative population growth, which the synthetic doesn't. 
+The algorithm's done a good job - mostly - in creating a synthetic Romania. Average GDP, imports and average government consumption,  are especially similar. The only major flaw is that real Romania has negative population growth, which the synthetic doesn't. 
 
 ```{r, echo=FALSE, warning = FALSE, message=FALSE}
 #graph comparing paths
@@ -84,5 +84,5 @@ There is a clear jump in real GDP per capita for Romania after accession to the 
 gdp_out %>% plot_differences()
 ```
 
-This can also be seen by plotting the differences. Before the accession, the difference moved around a mean of 0. After, it only grows.
+This can also be seen by plotting the differences. Before the accession, the difference moved around a mean of 0. After, the gap fairly consistently grows. 
 

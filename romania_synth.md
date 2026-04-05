@@ -25,9 +25,9 @@ account of NAs, I had to reduce the data to 1991 - 2021.
 
 ![](romania_synth_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-It looks like Colombia was the most suitable in constructing a synthetic
-Romania pre-2007. Latvia, Belarus and South (I presume) Korea also
-contribute a bit.
+It looks like Ukraine was the most suitable in constructing a synthetic
+Romania pre-2007. Turkey, Indonesia and South Korea also contribute a
+lot. The variable given the most weight is average gdp per capita.
 
 ## Synthetic and treated comparison
 
@@ -47,9 +47,9 @@ contribute a bit.
     ## 11 lag1_gdp         6877.             6590.         6959.
 
 The algorithm’s done a good job - mostly - in creating a synthetic
-Romania. Average GDP, exports and imports are especially similar. The
-only major flaw is that real Romania has negative population growth,
-which the synthetic doesn’t.
+Romania. Average GDP, imports and average government consumption, are
+especially similar. The only major flaw is that real Romania has
+negative population growth, which the synthetic doesn’t.
 
 ![](romania_synth_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
@@ -59,4 +59,5 @@ to the EU compared to the synthetic.
 ![](romania_synth_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 This can also be seen by plotting the differences. Before the accession,
-the difference moved around a mean of 0. After, it only grows.
+the difference moved around a mean of 0. After, the gap fairly
+consistently grows.

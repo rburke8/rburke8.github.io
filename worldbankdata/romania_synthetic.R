@@ -25,7 +25,7 @@ library(tidysynth)
 
 
 #----
-comp_per_employee <- read.csv("Barbara/worldbankdata/comp_per_employee.csv", skip = 4)  %>%
+comp_per_employee <- read.csv("worldbankdata/comp_per_employee.csv", skip = 4)  %>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -38,7 +38,7 @@ comp_per_employee <- read.csv("Barbara/worldbankdata/comp_per_employee.csv", ski
   mutate(year = as.numeric(year)) %>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-emp_rate <- read.csv("Barbara/worldbankdata/emp_rate.csv", skip = 4)%>%
+emp_rate <- read.csv("worldbankdata/emp_rate.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -51,7 +51,7 @@ emp_rate <- read.csv("Barbara/worldbankdata/emp_rate.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-gdp_per_cap <- read.csv("Barbara/worldbankdata/gdp_per_cap.csv", skip = 4)%>%
+gdp_per_cap <- read.csv("worldbankdata/gdp_per_cap.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -64,7 +64,7 @@ gdp_per_cap <- read.csv("Barbara/worldbankdata/gdp_per_cap.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-gov_cons <- read.csv("Barbara/worldbankdata/gov_cons.csv", skip = 4)%>%
+gov_cons <- read.csv("worldbankdata/gov_cons.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -76,7 +76,7 @@ gov_cons <- read.csv("Barbara/worldbankdata/gov_cons.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-gross_cap_formation <- read.csv("Barbara/worldbankdata/gross_cap_formation.csv", skip = 4)%>%
+gross_cap_formation <- read.csv("worldbankdata/gross_cap_formation.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -88,7 +88,7 @@ gross_cap_formation <- read.csv("Barbara/worldbankdata/gross_cap_formation.csv",
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-labour_produc <- read.csv("Barbara/worldbankdata/labour_produc.csv", skip = 4)%>%
+labour_produc <- read.csv("worldbankdata/labour_produc.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -101,7 +101,7 @@ labour_produc <- read.csv("Barbara/worldbankdata/labour_produc.csv", skip = 4)%>
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-unemp_rate <- read.csv("Barbara/worldbankdata/unemp_rate.csv", skip = 4)%>%
+unemp_rate <- read.csv("worldbankdata/unemp_rate.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -114,7 +114,7 @@ unemp_rate <- read.csv("Barbara/worldbankdata/unemp_rate.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-agri <- read.csv("Barbara/worldbankdata/agri_va.csv", skip = 4)%>%
+agri <- read.csv("worldbankdata/agri_va.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -127,7 +127,7 @@ agri <- read.csv("Barbara/worldbankdata/agri_va.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-exports <- read.csv("Barbara/worldbankdata/exports.csv", skip = 4)%>%
+exports <- read.csv("worldbankdata/exports.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -140,7 +140,7 @@ exports <- read.csv("Barbara/worldbankdata/exports.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-imports <- read.csv("Barbara/worldbankdata/imports.csv", skip = 4)%>%
+imports <- read.csv("worldbankdata/imports.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -153,7 +153,7 @@ imports <- read.csv("Barbara/worldbankdata/imports.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-industry_va <- read.csv("Barbara/worldbankdata/industry_va.csv", skip = 4)%>%
+industry_va <- read.csv("worldbankdata/industry_va.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -166,7 +166,7 @@ industry_va <- read.csv("Barbara/worldbankdata/industry_va.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-pop_growth <- read.csv("Barbara/worldbankdata/pop_growth.csv", skip = 4)%>%
+pop_growth <- read.csv("worldbankdata/pop_growth.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
@@ -179,7 +179,7 @@ pop_growth <- read.csv("Barbara/worldbankdata/pop_growth.csv", skip = 4)%>%
   mutate(year = as.numeric(year))%>% 
   select(- c("Indicator.Name", "Indicator.Code"))
 
-randd <- read.csv("Barbara/worldbankdata/randd.csv", skip = 4)%>%
+randd <- read.csv("worldbankdata/randd.csv", skip = 4)%>%
   rename_with(
     ~ gsub("^X|\\.x$", "", .x),   
     matches("^X\\d{4}")           
