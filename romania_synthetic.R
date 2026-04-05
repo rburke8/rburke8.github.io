@@ -1,4 +1,4 @@
-#Barbara Sianesi 
+
 #----
 library(AER)
 library(patchwork)
@@ -207,13 +207,11 @@ comp_per_employee <- comp_per_employee %>%
   left_join(randd,     by = c("Country.Code","year","Country.Name"))
 
 countries <- c(
-  "Australia", "Belarus", "Croatia", "Austria", "Belgium", "Canada", "Chile", "Colombia",
-  "Costa Rica", "Czech Republic", "Denmark", "Estonia", "Finland",
-  "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland",
-  "Israel", "Italy", "Japan", "Korea, Rep.", "Latvia", "Lithuania",
-  "Luxembourg", "Mexico", "Netherlands", "New Zealand", "Norway",
-  "Poland", "Portugal","Romania", "Slovak Republic", "Slovenia", "Spain",
-  "Sweden", "Switzerland", "Turkey", "United Kingdom", "United States"
+  "Argentina","Belarus","Brazil","Chile","China","Colombia","Costa Rica",
+  "Indonesia","India","Iran, Islamic Rep.","Jordan","Korea, Rep.","Mexico",
+  "Morocco","Malaysia","Panama","Peru","Romania","Russian Federation","Thailand",
+  "Turkiye","Ukraine","Uruguay","South Africa"
+  
 )
 
 
@@ -223,22 +221,20 @@ panel <- comp_per_employee %>%
     -matches("X\\."),   
     -matches("^X"),
     -wage_pc,
-    -r_and_d) %>%
+    -r_and_d) %>% 
   filter(Country.Name %in% countries)
 
 predictors <- c("gov_consump", "cap_form", "lab_produc", "agri_vala", "exportss", "importss","industry_vala", "popu_growth")
 
-# test <- panel %>%
-#   filter(year %in% 1991:2018) %>%
-#   group_by(Country.Name) %>%
-#   summarise(across(all_of(predictors), ~ sum(is.na(.x)))) %>%
-#   filter(if_any(all_of(predictors), ~ .x > 0))
+test <- panel %>%
+  filter(year %in% 1991:2021) %>%
+  group_by(Country.Name) %>%
+  summarise(across(all_of(predictors), ~ sum(is.na(.x)))) %>%
+  filter(if_any(all_of(predictors), ~ .x > 0))
 
-
-
+panel <- panel %>% 
+  filter(year>=1991)
 # Set up everything & construct the synthetic control
-
-
 gdp_out <- panel %>%
   
   synthetic_control(
@@ -263,7 +259,7 @@ generate_predictor(
   avg_industry    = mean(industry_vala, na.rm = TRUE),
   avg_pop_growth    = mean(popu_growth, na.rm = TRUE)
 ) %>%
-
+  
   # ---- Lagged GDP predictors ----
 generate_predictor(
   time_window = 2002:2006,
@@ -285,10 +281,6 @@ generate_weights(
   
   # ---- Build synthetic control ----
 generate_control()
-
-
-
-
 
 # Weighting of units and variables
 gdp_out %>% plot_weights()
@@ -368,73 +360,3 @@ p <- (p1 | p2) /
   (p3 | p4)  
 p
 ggsave(filename = "rom_synthetic.png", plot = p)
-
-
-
-
-#----
-#Excluding 2008-2009
-panel2 <- panel %>% 
-  filter(year != c(2008,2009))
-
-gdp_out2 <- panel2 %>%
-  
-  synthetic_control(
-    outcome = gdp_pc,
-    unit = Country.Name,
-    time = year,
-    i_unit = "Romania",
-    i_time = 2006,
-    generate_placebos = TRUE
-  ) %>%
-  
-  # ---- Average macro predictors ----
-generate_predictor(
-  time_window = 1991:2006,
-  avg_gdp          = mean(gdp_pc, na.rm = TRUE),
-  avg_gov_consump  = mean(gov_consump, na.rm = TRUE),
-  avg_cap_form     = mean(cap_form, na.rm = TRUE),
-  avg_lab_produc   = mean(lab_produc, na.rm = TRUE),
-  avg_agri     = mean(agri_vala, na.rm = TRUE),
-  avg_xports     = mean(exportss, na.rm = TRUE),
-  avg_imports     = mean(importss, na.rm = TRUE),
-  avg_industry    = mean(industry_vala, na.rm = TRUE),
-  avg_pop_growth    = mean(popu_growth, na.rm = TRUE)
-) %>%
-  
-  # ---- Lagged GDP predictors ----
-generate_predictor(
-  time_window = 2002:2006,
-  lag5_gdp = mean(gdp_pc, na.rm = TRUE)
-) %>%
-  
-  generate_predictor(
-    time_window = 2006,
-    lag1_gdp = gdp_pc
-  ) %>%
-  
-  # ---- Fit weights ----
-generate_weights(
-  optimization_window = 1991:2006,
-  margin_ipop = .02,
-  sigf_ipop = 7,
-  bound_ipop = 6
-) %>%
-  
-  # ---- Build synthetic control ----
-generate_control()
-
-
-
-
-
-# Weighting of units and variables
-gdp_out2 %>% plot_weights()
-
-# Comparability of synthetic control to treated unit
-gdp_out2 %>% grab_balance_table()
-
-#graph comparing paths
-gdp_out2 %>% plot_trends()
-# Graph of difference between the two
-gdp_out2 %>% plot_differences()

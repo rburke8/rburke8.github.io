@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE}
-source(here::here("Barbara","romania_synthetic.R"))
+source(here::here("romania_synthetic.R"))
 ```
 
 ```{r, libraries, echo=FALSE,include=FALSE,warning=FALSE}
