@@ -12,3 +12,4 @@ Homepage
 - [FRED](FRED.md)
 - [WORDLADDER](WORDLADDER.md)
 - [Synthetic controls!](romania_synth.md)
+- [camping](camping.md)
