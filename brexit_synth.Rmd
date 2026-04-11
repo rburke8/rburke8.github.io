@@ -1,0 +1,99 @@
+---
+title: "BREXIT - Synthetic Controls"
+output: github_document
+date: "2026-04-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+source(here::here("worldbankdata","romania_synthetic.R"))
+```
+
+```{r, libraries, echo=FALSE,include=FALSE,warning=FALSE}
+library(AER)
+library(patchwork)
+library(tidyverse)
+library(dplyr)
+library(purrr)
+library(gridExtra)
+library(readr)
+library("MatchIt")
+library("cobalt")
+library("matrixStats")
+library(ivreg)
+library("rdrobust")
+library("estimatr")
+library("Synth") 
+library("tidysynth")  
+library("jtools")
+library(tidyr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(readr)
+library(tidysynth)
+```
+
+
+# Introduction
+
+BREXIT synthetic control analysis.  
+
+
+## Synthetic UK after 2016 referendum
+
+
+
+
+## Control and variable weights
+
+```{r, echo = FALSE, warning = FALSE}
+# Weighting of units and variables
+gdp_out2 %>% plot_weights()
+```
+
+It looks like Ukraine was the most suitable in constructing a synthetic Romania pre-2007. Turkey, Indonesia and South Korea also contribute a lot. The variable given the most weight is average gdp per capita.  
+
+## Synthetic and treated comparison
+
+```{r, echo=FALSE,warning=FALSE, message=FALSE}
+# Comparability of synthetic control to treated unit
+gdp_out2 %>% grab_balance_table()
+```
+
+The algorithm's done a good job - mostly - in creating a synthetic Romania. Average GDP, imports and average government consumption,  are especially similar. The only major flaw is that real Romania has negative population growth, which the synthetic doesn't. 
+
+```{r, echo=FALSE, warning = FALSE, message=FALSE}
+#graph comparing paths
+gdp_out2 %>% plot_trends()
+```
+
+There is a clear jump in real GDP per capita for Romania after accession to the EU compared to the synthetic. 
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+# Graph of difference between the two
+gdp_out2 %>% plot_differences()
+```
+
+This can also be seen by plotting the differences. Before the accession, the difference moved around a mean of 0. After, the gap fairly consistently grows. 
+
+# Excluding COVID Years
+I also try excluding 2020 and 2021 in case COVID was messing with the inference. 
+
+```{r, echo=FALSE,warning=FALSE, message=FALSE}
+# Comparability of synthetic control to treated unit
+gdp_out3 %>% grab_balance_table()
+```
+
+```{r, echo=FALSE, warning = FALSE, message=FALSE}
+#graph comparing paths
+gdp_out3 %>% plot_trends()
+```
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+# Graph of difference between the two
+gdp_out3 %>% plot_differences()
+```

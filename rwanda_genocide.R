@@ -1,5 +1,4 @@
-
-#----
+#Rwandan genocide
 library(AER)
 library(patchwork)
 library(tidyverse)
@@ -220,76 +219,78 @@ comp_per_employee <- comp_per_employee %>%
   left_join(pop_growth,     by = c("Country.Code","year","Country.Name")) %>%
   left_join(randd,     by = c("Country.Code","year","Country.Name")) %>% 
   left_join(trade_openness,     by = c("Country.Code","year","Country.Name"))
-  
 
-countries <- c(
-  "Argentina","Belarus","Brazil","Chile","China","Colombia","Costa Rica",
-  "Indonesia","India","Iran, Islamic Rep.","Jordan","Korea, Rep.","Mexico",
-  "Morocco","Malaysia","Panama","Peru","Romania","Russian Federation","Thailand",
-  "Turkiye","Ukraine","Uruguay","South Africa", "Rwanda"
+
+countries_r <- c(
+  "Benin","Togo","Ghana","Mali","Niger","Burkina Faso","Senegal","Cameroon","Gabon","Zambia","Malawi","Tanzania","Kenya","Uganda","Lesotho","Botswana","Madagascar","Mauritius","Sao Tome and Principe","Cape Verde","Gambia","Guinea","Equatorial Guinea","Eritrea","Djibouti","Namibia","Swaziland","Central African Republic","Comoros","Seychelles","Fiji","Papua New Guinea","Solomon Islands","Vanuatu","Bangladesh","Nepal","Laos","Bhutan","Vietnam","Mongolia","Honduras","Nicaragua","Bolivia","Paraguay","Guyana","Suriname"
   
 )
 
 
 #----
-panel <- comp_per_employee %>%
+predictors <- c("gov_consump", "cap_form", "agri_vala", "trade_open","industry_vala", "popu_growth")
+
+panel_rw <- comp_per_employee %>%
   select(
     -matches("X\\."),   
     -matches("^X"),
     -wage_pc,
     -r_and_d) %>% 
-  filter(Country.Name %in% countries)
+  filter(Country.Name %in% countries_r) %>% 
+  select(Country.Name, year, c("gov_consump", "cap_form", "lab_produc", "agri_vala", "trade_open","industry_vala", "popu_growth", "gdp_pc"))
 
-predictors <- c("gov_consump", "cap_form", "lab_produc", "agri_vala", "trade_open","industry_vala", "popu_growth")
 
-test <- panel %>%
-  filter(year %in% 1991:2021) %>%
+panel_r <- panel_rw %>% 
+  filter(!Country.Name %in% c("Malawi", "Zambia", "Lesotho", "Tanzania", "Uganda", "Ghana")) %>% 
+  select(-lab_produc) %>% 
+  filter(year != 2025)
+
+test <- panel_r %>%
+  filter(year>=1984) %>% 
   group_by(Country.Name) %>%
   summarise(across(all_of(predictors), ~ sum(is.na(.x)))) %>%
   filter(if_any(all_of(predictors), ~ .x > 0))
 
-panel <- panel %>% 
-  filter(year>=1991)
+panel_r <- panel_r %>% 
+  filter(!Country.Name %in% test$Country.Name)
 # Set up everything & construct the synthetic control
-gdp_out <- panel %>%
+gdp_out_r <- panel_r %>%
   
   synthetic_control(
     outcome = gdp_pc,
     unit = Country.Name,
     time = year,
-    i_unit = "Romania",
-    i_time = 2006,
+    i_unit = "Rwanda",
+    i_time = 1993,
     generate_placebos = TRUE
   ) %>%
   
   # ---- Average macro predictors ----
 generate_predictor(
-  time_window = 1991:2006,
+  time_window = 1984:1993,
   avg_gdp          = mean(gdp_pc, na.rm = TRUE),
   avg_gov_consump  = mean(gov_consump, na.rm = TRUE),
   avg_cap_form     = mean(cap_form, na.rm = TRUE),
-  avg_lab_produc   = mean(lab_produc, na.rm = TRUE),
   avg_agri     = mean(agri_vala, na.rm = TRUE),
-  avg_xports     = mean(exportss, na.rm = TRUE),
-  avg_imports     = mean(importss, na.rm = TRUE),
+  avg_trade = mean(trade_open, na.rm = TRUE),
   avg_industry    = mean(industry_vala, na.rm = TRUE),
   avg_pop_growth    = mean(popu_growth, na.rm = TRUE)
 ) %>%
   
   # ---- Lagged GDP predictors ----
 generate_predictor(
-  time_window = 2002:2006,
+  time_window = 1984:1993,
   lag5_gdp = mean(gdp_pc, na.rm = TRUE)
 ) %>%
   
   generate_predictor(
-    time_window = 2006,
+    time_window = 1993,
     lag1_gdp = gdp_pc
   ) %>%
   
   # ---- Fit weights ----
 generate_weights(
-  optimization_window = 1991:2006,
+  optimization_window = 1984:1993,
   margin_ipop = .02,
   sigf_ipop = 7,
   bound_ipop = 6
@@ -299,217 +300,12 @@ generate_weights(
 generate_control()
 
 # Weighting of units and variables
-gdp_out %>% plot_weights()
+gdp_out_r %>% plot_weights()
 
 # Comparability of synthetic control to treated unit
-gdp_out %>% grab_balance_table()
+gdp_out_r %>% grab_balance_table()
 
 #graph comparing paths
-gdp_out %>% plot_trends()
+gdp_out_r %>% plot_trends()
 # Graph of difference between the two
-gdp_out %>% plot_differences()
-
-
-#----
-#plots
-plot_data <- panel %>% 
-  filter(year>=1991,
-         Country.Name == "Romania")
-maxgdp <- max(plot_data$gdp_pc)
-
-
-
-
-p1 <- ggplot(data = plot_data, aes(x = year, y = gdp_pc)) +
-  geom_line(linewidth = 0.5, color = "yellow") +
-  labs(x = "Year", y = "GDP per capita") +
-  theme(plot.background = element_rect("black")) +
-  theme(panel.background = element_rect("black")) +
-  ggtitle("Romania GDP_pc") +
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9)) +
-  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
-  geom_text(aes(x = 2007,y = 12000, label = "Accession to EU"),color = "green", size = 2)
-
-p2 <- ggplot(data = plot_data, aes(x = year, y = cap_form)) +
-  geom_line(linewidth = 0.5, color = "yellow") +
-  labs(x = "Year", y = "Capital formation") +
-  theme(plot.background = element_rect("black")) +
-  theme(panel.background = element_rect("black")) +
-  ggtitle("Romania Capital Formation") +
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9))+
-  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
-  geom_text(aes(x = 2007,y = 32.5, label = "Accession to EU"),color = "green", size = 2)
-
-p3 <- ggplot(data = plot_data, aes(x = year, y = lab_produc)) +
-  geom_line(linewidth = 0.5, color = "yellow") +
-  labs(x = "Year", y = "Labour productivity") +
-  theme(plot.background = element_rect("black")) +
-  theme(panel.background = element_rect("black")) +
-  ggtitle("Romania Labour Productivity") +
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9))+
-  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
-  geom_text(aes(x = 2007,y = 100000, label = "Accession to EU"),color = "green", size = 2)
-
-p4 <- ggplot(data = plot_data, aes(x = year, y = gov_consump)) +
-  geom_line(linewidth = 0.5, color = "yellow") +
-  labs(x = "Year", y = "Government Consumption") +
-  theme(plot.background = element_rect("black")) +
-  theme(panel.background = element_rect("black")) +
-  ggtitle("Romania Government Consumption") +
-  theme(axis.title.x = element_text(color = "white")) +
-  theme(axis.title.y = element_text(color = "white")) +
-  theme(plot.title = element_text(color = "white", face = "bold", size = 9)) +
-  geom_vline(xintercept = 2007, linetype = "solid" , size = 1, color = "red") +
-  geom_text(aes(x = 2007,y = 19, label = "Accession to EU"),color = "green", size = 2)
-
-
-grid.arrange(p1,p2,p3,p4, nrow = 2)
-
-
-p <- (p1 | p2) /
-  (p3 | p4)  
-p
-ggsave(filename = "rom_synthetic.png", plot = p)
-
-#-----------------------------------------------------------------
-
-#-----------------------------------------------
-#UK Brext
-countries2 <- c("Austria","Belgium","Bulgaria","Croatia","Cyprus","Czechia","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden", "United Kingdom"
-)
-
-panel2 <- comp_per_employee %>%
-  select(
-    -matches("X\\."),   
-    -matches("^X"),
-    -wage_pc) %>% 
-  filter(Country.Name %in% countries2)
-
-predictors <- c("gov_consump", "cap_form", "lab_produc", "trade_open","industry_vala", "popu_growth")
-
-
-# Set up everything & construct the synthetic control
-gdp_out2 <- panel2 %>%
-  
-  synthetic_control(
-    outcome = gdp_pc,
-    unit = Country.Name,
-    time = year,
-    i_unit = "United Kingdom",
-    i_time = 2015,
-    generate_placebos = TRUE
-  ) %>%
-  
-  # ---- Average macro predictors ----
-generate_predictor(
-  time_window = 1991:2015,
-  avg_gdp          = mean(gdp_pc, na.rm = TRUE),
-  avg_gov_consump  = mean(gov_consump, na.rm = TRUE),
-  avg_cap_form     = mean(cap_form, na.rm = TRUE),
-  avg_lab_produc   = mean(lab_produc, na.rm = TRUE),
-  avg_trade     = mean(trade_open, na.rm = TRUE),
-  avg_industry    = mean(industry_vala, na.rm = TRUE),
-  avg_pop_growth    = mean(popu_growth, na.rm = TRUE)
-) %>%
-  
-  # ---- Lagged GDP predictors ----
-generate_predictor(
-  time_window = 2010:2015,
-  lag5_gdp = mean(gdp_pc, na.rm = TRUE)
-) %>%
-  
-  generate_predictor(
-    time_window = 2015,
-    lag1_gdp = gdp_pc
-  ) %>%
-  
-  # ---- Fit weights ----
-generate_weights(
-  optimization_window = 1991:2015,
-  margin_ipop = .02,
-  sigf_ipop = 7,
-  bound_ipop = 6
-) %>%
-  
-  # ---- Build synthetic control ----
-generate_control()
-
-# Weighting of units and variables
-gdp_out2 %>% plot_weights()
-
-# Comparability of synthetic control to treated unit
-gdp_out2 %>% grab_balance_table()
-
-#graph comparing paths
-gdp_out2 %>% plot_trends()
-# Graph of difference between the two
-gdp_out2 %>% plot_differences()
-
-
-##Ignoring COVID
-panel3 <- panel2 %>% 
-  filter(!year %in% c(2020,2021))
-
-# Set up everything & construct the synthetic control
-gdp_out3 <- panel3 %>%
-  
-  synthetic_control(
-    outcome = gdp_pc,
-    unit = Country.Name,
-    time = year,
-    i_unit = "United Kingdom",
-    i_time = 2015,
-    generate_placebos = TRUE
-  ) %>%
-  
-  # ---- Average macro predictors ----
-generate_predictor(
-  time_window = 1991:2015,
-  avg_gdp          = mean(gdp_pc, na.rm = TRUE),
-  avg_gov_consump  = mean(gov_consump, na.rm = TRUE),
-  avg_cap_form     = mean(cap_form, na.rm = TRUE),
-  avg_lab_produc   = mean(lab_produc, na.rm = TRUE),
-  avg_trade     = mean(trade_open, na.rm = TRUE),
-  avg_industry    = mean(industry_vala, na.rm = TRUE),
-  avg_pop_growth    = mean(popu_growth, na.rm = TRUE)
-) %>%
-  
-  # ---- Lagged GDP predictors ----
-generate_predictor(
-  time_window = 2010:2015,
-  lag5_gdp = mean(gdp_pc, na.rm = TRUE)
-) %>%
-  
-  generate_predictor(
-    time_window = 2015,
-    lag1_gdp = gdp_pc
-  ) %>%
-  
-  # ---- Fit weights ----
-generate_weights(
-  optimization_window = 1991:2015,
-  margin_ipop = .02,
-  sigf_ipop = 7,
-  bound_ipop = 6
-) %>%
-  
-  # ---- Build synthetic control ----
-generate_control()
-
-# Weighting of units and variables
-gdp_out3 %>% plot_weights()
-
-# Comparability of synthetic control to treated unit
-gdp_out3 %>% grab_balance_table()
-
-#graph comparing paths
-gdp_out3 %>% plot_trends()
-# Graph of difference between the two
-gdp_out3 %>% plot_differences()
-
+gdp_out_r %>% plot_differences()

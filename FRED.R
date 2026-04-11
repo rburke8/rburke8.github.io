@@ -5,8 +5,16 @@ library(dplyr)
 library(tidyverse)
 library(tidyr)
 library(ggplot2)
+library(lubridate)
 library(fredo)
 library(jsonlite)
+library(rvest)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(scales)
+library(lubridate)
+library(patchwork)
 
 
 api_key <- Sys.getenv("FRED_API_KEY")
@@ -128,6 +136,32 @@ ggplot(df5, aes(x = date, y = value)) +
     x = "Year",
     y = "Count",
     title = "UK Working Age Population - 1971 - 2025"
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  theme(
+    plot.title = element_text(size = 9, face = "bold", colour = "white"),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    axis.title.x = element_text(color = "white"),
+    axis.title.y = element_text(color = "white"), 
+    axis.text = element_text(color = "white")
+  )
+
+#----
+series_ids6 <- "NYGDPPCAPKDGBR"
+start_date6 <- "1960-01-01"
+end_date6 <- "2024-01-01"
+
+df6 <- fredo(api_key, series_ids6, start_date6, end_date6) %>% 
+  mutate(date = as.Date(date, format = "%Y-%m-%d")) %>% 
+  filter(year(date) >=2007)
+
+ggplot(df6, aes(x = date, y = value)) + 
+  geom_line(color = "yellow", linewidth = 1) +
+  labs(
+    x = "Year",
+    y = "2010 dollars",
+    title = "UK GDP per capita"
   ) +
   scale_y_continuous(labels = scales::comma) +
   theme(
